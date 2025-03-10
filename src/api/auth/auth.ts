@@ -15,6 +15,14 @@ app.on(
     maxAge: 600,
     credentials: true,
   }),
+  // Make sure the PullZone doesn't cache the response
+  async (c, next) => {
+    await next();
+
+    c.header("Cache-Control", "no-cache, no-store, must-revalidate");
+    c.header("Pragma", "no-cache");
+    c.header("Expires", "0");
+  },
   (c) => authService(c).authClient.handler(c.req.raw),
 );
 
