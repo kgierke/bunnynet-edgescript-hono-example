@@ -1,0 +1,29 @@
+# General
+.env
+!.env.example
+dist/
+
+# Logs
+logs/
+coverage/
+*.log
+npm-debug.log*
+
+# Node
+node_modules/
+
+# Terraform
+.terraform/
+
+# OS
+.DS_Store
+
+# Editor
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

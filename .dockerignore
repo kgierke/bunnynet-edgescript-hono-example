@@ -1,0 +1,16 @@
+# Directories
+.github/
+node_modules/
+dist/
+
+# Files
+.dockerignore
+.env
+.env*
+.gitignore
+.prettierrc.json
+*.hcl
+docker-compose.yml
+*.tf
+README.md
+renovate.json

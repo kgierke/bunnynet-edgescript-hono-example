@@ -1,0 +1,55 @@
+services:
+  db:
+    image: postgres:17-alpine
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=default
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  db-init:
+    build:
+      context: .
+      target: build
+      dockerfile: Dockerfile
+    entrypoint: "npm run db:migrate"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgres://admin:postgres@db:5432/default
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    build:
+      context: .
+      target: build
+      dockerfile: Dockerfile
+    entrypoint: "npm run dev"
+    ports:
+      - "7000:7000"
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+      - /usr/src/app/dist
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgres://admin:postgres@db:5432/default
+      - AUTH_TRUSTED_ORIGINS=http://localhost:7001
+      - BASE_URL=http://localhost:7000
+      - APP_URL=http://localhost:7001
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+
+volumes:
+  db_data:
